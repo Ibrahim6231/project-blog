@@ -15,6 +15,7 @@ router.get("/getBlogData", blogController.getBlogData)
 
 router.delete("/blogs/:blogId", blogController.blogs) 
 
+router.delete("/blog", blogController.deleteQuery)
 
 
 

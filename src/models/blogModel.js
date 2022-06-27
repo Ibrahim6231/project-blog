@@ -19,10 +19,7 @@ const blogSchema = new mongoose.Schema({
         required: true
     },
     "sub-category":[],
-    publishedAt: {
-        type: Date,
-        default: Date.now
-    },
+    publishedAt: Date,
     isPublished: {type: Boolean, default: false},
     isDeleted : {
         type: Boolean,

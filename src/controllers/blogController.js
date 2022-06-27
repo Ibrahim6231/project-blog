@@ -7,7 +7,8 @@ const jwt = require('jsonwebtoken');
 
 const createBlog = async function (req, res) {      
     try {                                                                                                   //trim=>handle only space in string like "   "
-        const content = req.body;       
+        const content = req.body;   
+        if(content.isPublished === true){content.publishedAt = Date.now()}    
         const savedData = await blogModel.create(content);
         return res.status(201).send({ status: true, data: savedData });
     } catch (err) {
@@ -56,6 +57,8 @@ const updateBlog = async function (req, res) {
         if (Object.keys(data).length === 0) { return res.status(400).send({ status: false, msg: "cannot update empty body" }) };   //validation1
 
         const blog = await blogModel.findById(Id);  //already validated in mw-checkOwner
+        if(blog.isDeleted === true){return res.status(404).send({status:false, msg: "no such blog exists"})};//validation1
+
 
         if (data.tags) {
             data.tags = [...blog.tags, ...data.tags];
@@ -66,6 +69,9 @@ const updateBlog = async function (req, res) {
         if (data["sub-category"]) {
             data["sub-category"] = [...blog["sub-category"], ...data["sub-category"]]   //$addToSet, $push, $set, $inc
         }
+
+      
+        
 
         const updated = await blogModel.findByIdAndUpdate(Id, { $set: { ...data, isPublished: true, publishedAt: Date.now() } }, { new: true });
         return res.status(200).send({ status: true, data: updated });

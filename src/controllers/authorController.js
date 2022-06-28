@@ -33,7 +33,7 @@ const login = async function (req, res) {
         const token = jwt.sign({ authorId: author._id.toString(), collection: "authors", project: "Blog" }, "topScerect");
 
         res.setHeader("x-api-key", token);
-        res.status(200).send({ status: true, data: "congratulations!!! your login is succesful", token:token });
+        res.status(200).send({ status: true, msg: "congratulations!!! your login is succesful", data:{token} });
     } catch (err) {
         return res.status(500).send({ status: false, error: err.name, msg: err.message });
     }

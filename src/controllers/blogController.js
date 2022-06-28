@@ -39,7 +39,7 @@ const listBlogsByQuery = async function (req, res) {
         const documents = await blogModel.find(filters);    //empty array
         if (documents.length == 0) { return res.status(404).send({ status: false, msg: "no such documents with specified condiontions" }) };  //validation2
 
-        return res.status(200).send({ status: true, data: documents })
+        return res.status(200).send({ status: true, data: documents})   //best Practice : give msg to user about work
     } catch (err) {
         console.log(err)
         return res.status(500).send({ status: false, erroor: err.name, msg: err.message})
@@ -56,9 +56,8 @@ const updateBlog = async function (req, res) {
         let data = req.body;
         if (Object.keys(data).length === 0) { return res.status(400).send({ status: false, msg: "cannot update empty body" }) };   //validation1
 
-        const blog = await blogModel.findById(Id);  //already validated in mw-checkOwner
-        if(blog.isDeleted === true){return res.status(404).send({status:false, msg: "no such blog exists"})};//validation1
-
+        const blog = await blogModel.findById(Id);  
+        if(!blog || blog.isDeleted === true){return res.status(404).send({status:false, msg: "no such blog exists"})};//validation1
 
         if (data.tags) {
             data.tags = [...blog.tags, ...data.tags];
@@ -69,9 +68,6 @@ const updateBlog = async function (req, res) {
         if (data["sub-category"]) {
             data["sub-category"] = [...blog["sub-category"], ...data["sub-category"]]   //$addToSet, $push, $set, $inc
         }
-
-      
-        
 
         const updated = await blogModel.findByIdAndUpdate(Id, { $set: { ...data, isPublished: true, publishedAt: Date.now() } }, { new: true });
         return res.status(200).send({ status: true, data: updated });
@@ -113,13 +109,15 @@ const deleteByQuery = async function(req, res){
         if(category){filters.category = {$all: category.split(",").map((x)=>x.trim())}};
         if(tags){filters.tags = {$all: tags.split(",").map((x)=>x.trim())}};
         if(subCtg){filters[subCtg] = {$all:subCtg.split(",").map((x)=>x.trim())}};
-        if(isPublished){filters.isPublished = isPublished};                           
-
+        if(isPublished){filters.isPublished = isPublished};  
+        
+        if(Object.keys(filters).length === 2){return res.status(400).send({status:false, msg: "enter atleast 1 filters apart from authorId, else your all blogs from Your id will be deleted"})}
+        
         const filteredBlogs = await blogModel.findOne(filters);           //filters 
         if(!filteredBlogs){return res.status(404).send({status:false,   msg: "no match found for deleting" })}  //validation
 
         const d = new Date; const dateTime = d.toLocaleString();
-
+        
         const deleted = await blogModel.updateMany(filters,{$set:{isDeleted:true, deletedAt: dateTime}});
         return  res.status(200).send({status:true, msg: "deleted successfully", msg2: deleted});
 

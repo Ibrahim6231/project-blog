@@ -3,10 +3,8 @@ const blogModel = require('../models/blogModel.js');
 const jwt = require('jsonwebtoken');
 
 
-
-
 const createBlog = async function (req, res) {      
-    try {                                                                                                   //trim=>handle only space in string like "   "
+    try {                                                                                                  
         const content = req.body;   
         if(content.isPublished === true){content.publishedAt = Date.now()}    
         const savedData = await blogModel.create(content);

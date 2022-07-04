@@ -12,7 +12,6 @@ const createBlog = async function (req, res) {
         const savedData = await blogModel.create(content);
         return res.status(201).send({ status: true, data: savedData });
     } catch (err) {
-        console.log(err)
         return res.status(500).send({ status: false, error: err.name, msg: err.message })
     }
 }
@@ -41,7 +40,6 @@ const listBlogsByQuery = async function (req, res) {
 
         return res.status(200).send({ status: true, data: documents})   //best Practice : give msg to user about work
     } catch (err) {
-        console.log(err)
         return res.status(500).send({ status: false, erroor: err.name, msg: err.message})
         
     }
@@ -73,7 +71,6 @@ const updateBlog = async function (req, res) {
         return res.status(200).send({ status: true, data: updated });
 
     } catch (err) {
-        console.log(err);
         return res.status(500).send({ status: false, error: err.name, msg: err.message })  //server error
     }
 }
@@ -91,7 +88,6 @@ const deleteById = async function(req,res){
         return res.status(200).send({status:true, msg: "blog deleted successfully"});
 
     } catch (error) {
-        console.log(error);
         return res.status(500).send({status:false, error: error.name, msg: error.message})
     }
 }
@@ -111,7 +107,6 @@ const deleteByQuery = async function(req, res){
         if(subCtg){filters[subCtg] = {$all:subCtg.split(",").map((x)=>x.trim())}};
         if(isPublished){filters.isPublished = isPublished};  
         
-        if(Object.keys(filters).length === 2){return res.status(400).send({status:false, msg: "enter atleast 1 filters apart from authorId, else your all blogs from Your id will be deleted"})}
         
         const filteredBlogs = await blogModel.findOne(filters);           //filters 
         if(!filteredBlogs){return res.status(404).send({status:false,   msg: "no match found for deleting" })}  //validation
@@ -123,7 +118,6 @@ const deleteByQuery = async function(req, res){
 
         
     } catch (error) {
-        console.log(error);//remove it
         return res.status(500).send({status:false, error:error.name, msg: error.message});
     }
 }

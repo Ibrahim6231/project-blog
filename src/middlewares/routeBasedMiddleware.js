@@ -52,16 +52,17 @@ const authforQueryDelete = async function (req, res, next) {
         const loggedInUserId = decode.authorId;
 
         let authorId = req.query.authorId;
-        if (authorId && !mongoose.Types.ObjectId.isValid(authorId)) { return res.status(400).send({ status: false, msg: "enter a valid id" }) } //validation1
-        if (authorId && (authorId !== loggedInUserId)) { return res.status(400).send({ status: false, msg: "you are not authorised to delete blogs of different author" }) } //val2
-        if (!authorId) { authorId = loggedInUserId }; //validation3
-        req.query.authorId = authorId; //updating authorId qeury by loggedInUserId value
+        if (!mongoose.Types.ObjectId.isValid(authorId)) { return res.status(400).send({ status: false, msg: "atleast enter a valid id" }) } //validation1
+        if (authorId !== loggedInUserId) { return res.status(400).send({ status: false, msg: "you are not authorised to delete blogs of different author" }) } //val2
+        
         next();
     } catch (error) {
         console.log(error);
         return res.status(500).send({ status: false, error: error.name, msg: error.message })
     }
 }
+
+
 
 
 

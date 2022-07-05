@@ -102,7 +102,7 @@ const deleteByQuery = async function(req, res){
         if(authorId){filters.authorId = authorId};
         if(category){filters.category = {$all: category.split(",").map((x)=>x.trim())}};
         if(tags){filters.tags = {$all: tags.split(",").map((x)=>x.trim())}};
-        if(subCtg){filters[subCtg] = {$all:subCtg.split(",").map((x)=>x.trim())}};
+        if(subCtg){filters["sub-category"] = {$all:subCtg.split(",").map((x)=>x.trim())}};
         if(isPublished){filters.isPublished = isPublished};  
         
         
